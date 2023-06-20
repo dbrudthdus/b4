@@ -1,26 +1,21 @@
 package org.zerock.b4.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UploadResultDTO {
-	
-	private String uuid;
-	private String fileName;
-	private boolean img;
-	
-	public String getLink(){
-		if(img){
-			return "s_"+uuid + "_" + fileName;
-		}else {
-			return "default.jpg";
-		}
-	}
+public class ProductListDTO {
 
+	private Integer pno;
+	private String pname;
+	private int price;
+	private boolean status;
+	private String fileName;
+	
 }

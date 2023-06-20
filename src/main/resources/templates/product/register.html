@@ -9,6 +9,20 @@
 
 	<h1>Product Register Page</h1>
 
+	<!-- form 태그 안 button은 기본이 submit -->
+
+	<form class="actionForm" action="/product/register" method="post">
+		<div>
+			<input type="text" name="pname" value="상품1">
+		</div>
+		<div>
+			<input type="number" name="price" value="12000">
+		</div>
+		<div>
+			<button class="saveBtn">Register</button>
+		</div>
+	</form>	
+
 	<input class="uploadInput" type="file" name="upload" multiple>
 	<!-- multiple: 여러 개 업로드 할 때 -->
 	<button class="uploadBtn">UPLOAD</button>
@@ -39,6 +53,43 @@
 		const uploadBtn = document.querySelector(".uploadBtn");
 		const uploadInput = document.querySelector(".uploadInput");
 		const uploadUL = document.querySelector(".uploadUL");
+
+		const saveBtn = document.querySelector(".saveBtn");
+
+		const actionForm = document.querySelector(".actionForm");
+
+		saveBtn.addEventListener("click", e => {
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			const liArr = uploadUL.querySelectorAll("li");
+
+			if(!liArr || liArr.length === 0) {
+				
+				alert("파일을 첨부해주세요.");
+
+				return
+			}
+
+			let str = ""
+
+			for(let liObj of liArr) {
+
+				console.log(liObj);
+				const uuid = liObj.getAttribute("data-uuid");
+				const fileName = liObj.getAttribute("data-filename");
+
+				console.log(uuid, fileName);
+				console.log("=====================================");
+
+				str += `<input type='hidden' name='fileNames' value='${uuid}_${fileName}'>`;
+
+			}
+
+			actionForm.innerHTML += str;
+
+		}, false)
 
 		uploadBtn.addEventListener("click", e => {
 
@@ -83,7 +134,7 @@
 				const {fileName, link, uuid} = uploadFile;
 
 				str += `
-				<li>
+				<li data-uuid='${uuid}' data-fileName='${fileName}'>
 					<div>
 						<a href='http://localhost/${uuid}_${fileName}' target="_blank">
 						<img src='http://localhost/${link}'/>
@@ -101,15 +152,31 @@
 
 			e.preventDefault();
 			e.stopPropagation();
+			// 안전장치
 			alert("remove File");
 
 			const liObj = e.target.closest("li");
 			
 			console.log(liObj);
 
+			axios.delete(`http://localhost:8080/removeFile/${uuid}_${fileName}`)
+
 			liObj.remove();
 
 		}
+
+		window.onbeforeunload = function() {
+			console.log("AAAAAAAAAAAAAAAAAA")
+
+			return '';
+		}
+
+
+
+		// window.addEventListener("beforeunload", e => {
+		// 	e.preventDefault()
+		// 	alert("AAAA")
+		// }, false)
 		
 	</script>
 
