@@ -234,3 +234,5 @@ List.of() : 값 여러개 한 번에 넣기
 
 	console.log(map1);
 	// Expected output: Array [2, 8, 18, 32]
+
+    test
