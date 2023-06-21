@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<h1>Product modify</h1>	
+
+	<!-- [Step2]  -->
+	<!-- 상품 데이터 출력 -->
+	<form>
+		<p>
+			<input type="text" name="pno" th:value="${dto.pno}">
+		</p>
+		<p>
+			<input type="text" name="pname" th:value="${dto.pname}">
+		</p>
+	</form>
+
+	<input class="uploadInput" type="file" name="upload" multiple>
+	<!-- multiple: 여러 개 업로드 할 때 -->
+	<button class="uploadBtn">UPLOAD</button>
+
+	<div class="uploadDiv">
+		<ul class="uploadUL">
+
+		</ul>
+	</div>
+
+	<style>
+		.uploadUL {
+			list-style: none;
+			display: flex;
+		}
+		.uploadUL li {
+			margin: 1em;
+			background-color: lightpink;
+			padding: 1em;
+			border: 1px solid darksalmon;
+			border-radius: 0.2em;
+		}
+	</style>
+	
+
+	<!-- Axios로 이미지 불러와서 출력 -->
+	<!-- Todo -> Axios로 호출할 URL 기능 개발 필요  -->
+
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script th:inline="javascript">
+
+		// [Step2.5]
+		// 등록 과정과 유사 -> 첨부 파일 수정 / 상품 데이터 수정
+		// POST 방식으로 submit -> 등록과 동일한 데이터
+		// 이 안에서만 지지고 볶고 장구 치고 눈누난나
+		// 네가 좋은 대학을 가고 좋은 데를 가고 좋은 사람들을 만나기 위해서 ★공부★를 해야 한다..!
+		
+		const pno = [[${dto.pno}]];
+		const uploadUL = document.querySelector(".uploadUL");
+
+		const uploadBtn = document.querySelector(".uploadBtn");
+		const uploadInput = document.querySelector(".uploadInput");
+		
+
+		const loadImages = () => {
+			axios.get(`http://localhost:8080/product/images/${pno}`)
+			.then(res => {
+				// res는 배열
+				const arr = res.data
+				console.log(arr);
+				
+				// 배열 -> 객체
+				const objArr = arr.map(str => {
+					const uuid = str.substring(0, 36);
+					const fileName = str.substring(37);
+					const link = "s_" + str;
+
+					// a를 b로 바꾸는 게 MAP -> map은 순수 js의 기능 (React에서 많이 사용)
+					return {uuid, fileName, link};
+					// key 값이 없으면 key=value
+				})
+
+				console.log(objArr);
+				showProducts(objArr);
+
+			})
+		}
+
+
+		const showProducts = (arr) => {
+
+			let str = "";
+
+			for(const uploadFile of arr){
+				// console.log(uploadFile);
+				const {fileName, link, uuid} = uploadFile;
+
+				str += `
+				<li data-uuid='${uuid}' data-fileName='${fileName}'>
+					<div>
+						<a href='http://localhost/${uuid}_${fileName}' target="_blank">
+						<img src='http://localhost/${link}'/>
+						</a>
+						<p>${fileName}<button onclick="javascript:removeFile(event, '${uuid}', '${fileName}')">x</button></p>
+					</div>
+				</li>`;
+			}
+			uploadUL.innerHTML += str;	// 업로드를 여러 번 할 경우를 대비해 '+=' 사용
+		}
+
+
+		const removeFile = (e, uuid, fileName) => {
+
+			e.preventDefault();
+			e.stopPropagation();
+			// 안전장치
+			alert("remove File");
+
+			const liObj = e.target.closest("li");
+
+			console.log(liObj);
+
+			axios.delete(`http://localhost:8080/removeFile/${uuid}_${fileName}`)
+
+			liObj.remove();
+
+		}
+
+
+		uploadBtn.addEventListener("click", e => {
+
+			e.preventDefault();
+			e.stopPropagation();
+			// 안전장치
+
+			console.dir(uploadInput.files);		// file에 대한 정보
+
+			if(!uploadInput.files || uploadInput.files.length === 0){
+				// uploadInput의 파일이 없거나 사이즈가 0일 때
+				return;
+			}
+
+			const formData = new FormData();
+
+			for (let i = 0; i < uploadInput.files.length; i++){
+					formData.append("files", uploadInput.files[i]);
+					// 첨부 파일들을 files란 이름으로 업로드
+			}
+
+			console.dir(formData);
+
+			const header = {headers: {"Content-Type": "multipart/form-data"}};
+
+			axios.post('http://localhost:8080/upload', formData, header)
+			.then(res => {
+				const result = res.data;
+				console.log(result);
+				showProducts(result);
+			})
+
+		}, false)
+
+		loadImages();
+
+	</script>
+</body>
+</html>

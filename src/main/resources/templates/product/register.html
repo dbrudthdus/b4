@@ -89,6 +89,8 @@
 
 			actionForm.innerHTML += str;
 
+			actionForm.submit()
+
 		}, false)
 
 		uploadBtn.addEventListener("click", e => {
@@ -165,11 +167,11 @@
 
 		}
 
-		window.onbeforeunload = function() {
-			console.log("AAAAAAAAAAAAAAAAAA")
+		// window.onbeforeunload = function() {
+		// 	console.log("AAAAAAAAAAAAAAAAAA")
 
-			return '';
-		}
+		// 	return '';
+		// }
 
 
 
