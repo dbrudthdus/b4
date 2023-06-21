@@ -235,4 +235,13 @@ List.of() : 값 여러개 한 번에 넣기
 	console.log(map1);
 	// Expected output: Array [2, 8, 18, 32]
 
-    test
+자바에서 가장 중요한 인터페이스
+java.lang.object
+1. 객체의 라이프사이클 (객체 생성,소멸 기능 상속)
+2. 쓰레드
+3. 자료구조
+  - equals(), hashCode()
+Collection 에서 동작함
+
+중요한 데이터 Collection을 사용할 예정이면 자료형으로 사용
+pk는 자료형으로 사용해준다
