@@ -10,6 +10,7 @@
 	<ul>
     <li th:each="dto :${res.list}">
       <a th:href="@{|/product/modify/${dto.pno}|(page=${pageRequestDTO.page}, size=${pageRequestDTO.size})}">Go to /hello</a>
+      <!--/* <a th:href="@{/product/modify/{pno}(pno=${dto.pno}, page=${pageRequestDTO.page}, size=${pageRequestDTO.size})}">Go to /hello</a> */-->
 
       [[${dto}]]
       <img  th:src="|http://localhost/s_${dto.fileName}|">
